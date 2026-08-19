@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbit Labz | High-Converting Content Agency for Brands & Creators</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            orbit: {
+              bg: '#070709',
+              card: '#0d0f17',
+              surface: '#121522',
+              blue: {
+                DEFAULT: '#2563eb',
+                bright: '#3b82f6',
+                glow: '#60a5fa',
+                dark: '#1d4ed8',
+                deep: '#1e3a8a',
+                badge: '#1b3b86'
+              }
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS Styles -->
+  <style>
+    body {
+      background-color: #070709;
+      color: #ffffff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070709;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #2563eb;
+    }
+    /* Horizontal Marquee Animation */
+    @keyframes marqueeLeft {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes marqueeRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0%); }
+    }
+    .animate-marquee-left {
+      animation: marqueeLeft 30s linear infinite;
+    }
+    .animate-marquee-right {
+      animation: marqueeRight 30s linear infinite;
+    }
+    .social-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      vertical-align: middle;
+      margin: 0 6px;
+    }
+    .social-pill-light {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: rgba(15, 23, 42, 0.06);
+      border: 1px solid rgba(15, 23, 42, 0.15);
+      backdrop-filter: blur(12px);
+      vertical-align: middle;
+      margin: 0 6px;
+    }
+  </style>
+
+  <!-- React & Babel CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#070709] text-white selection:bg-blue-600 selection:text-white">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- Inline Social Icons ---
+    const InstagramIcon = () => (
+      <div className="w-5 h-5 flex items-center justify-center rounded-md bg-gradient-to-tr from-yellow-500 via-pink-600 to-purple-600 p-0.5 shadow-sm hover:scale-110 transition-transform">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full text-white">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+        </svg>
+      </div>
+    );
+
+    const TikTokIcon = () => (
+      <div className="w-5 h-5 flex items-center justify-center rounded-md bg-black border border-white/20 p-0.5 shadow-sm hover:scale-110 transition-transform">
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full text-white">
+          <path d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 1 1-2.099-2.801V9.406a6.34 6.34 0 1 0 5.544 6.266V9.006a8.212 8.212 0 0 0 5.228 1.954V7.515a4.78 4.78 0 0 1-1.458-.829z" />
+        </svg>
+      </div>
+    );
+
+    const YouTubeShortsIcon = () => (
+      <div className="w-5 h-5 flex items-center justify-center rounded-md bg-red-600 p-0.5 shadow-sm hover:scale-110 transition-transform">
+        <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full text-white">
+          <path d="M17.77 10.32l-1.2-.5L18 8.7a3.65 3.65 0 0 0-4.85-4.85l-5.6 3.12a3.65 3.65 0 0 0 1.63 6.72l1.2.5-1.43 1.12a3.65 3.65 0 0 0 4.85 4.85l5.6-3.12a3.65 3.65 0 0 0-1.63-6.72zM10 14.5v-5l4.5 2.5-4.5 2.5z" />
+        </svg>
+      </div>
+    );
+
+    const SocialPillCapsule = ({ isLight }) => (
+      <span className={isLight ? "social-pill-light cursor-pointer transition-all" : "social-pill cursor-pointer transition-all"}>
+        <InstagramIcon />
+        <TikTokIcon />
+        <YouTubeShortsIcon />
+      </span>
+    );
+
+    // --- Main App Component ---
+    function App() {
+      const [activeTab, setActiveTab] = useState('creators');
+      const [isBookingOpen, setIsBookingOpen] = useState(false);
+      const [searchQuery, setSearchQuery] = useState('');
+      const [isSearchFocused, setIsSearchFocused] = useState(false);
+      const [formSubmitted, setFormSubmitted] = useState(false);
+
+      const searchInputRef = useRef(null);
+
+      const searchResults = [
+        { title: "For Creators - Personal Brand Growth", section: "#switcher", category: "Creators" },
+        { title: "For Brands - Organic Funnels & UGC", section: "#switcher", category: "Brands" },
+        { title: "Short-Form Virality Package", section: "#services", category: "Services" },
+        { title: "YouTube Video Essay Production", section: "#services", category: "Services" },
+        { title: "Scripting & Hook Engineering", section: "#services", category: "Services" },
+      ];
+
+      const filteredResults = searchQuery.trim() === ''
+        ? searchResults
+        : searchResults.filter(r => r.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [activeTab, isBookingOpen, isSearchFocused, searchQuery]);
+
+      /*
+        4 ROLLING LAYERS OF YOUR UPLOADED BACKGROUND IMAGES
+      */
+      const heroRow1 = [
+        { id: 1, src: "./bg-1.jpg", label: "Payouts Showcase" },
+        { id: 2, src: "./bg-2.jpg", label: "Bugatti Transaction" },
+        { id: 3, src: "./bg-3.jpg", label: "15M Empire Story" },
+      ];
+
+      const heroRow2 = [
+        { id: 4, src: "./bg-4.jpg", label: "Daily Revenue Apps" },
+        { id: 5, src: "./bg-5.jpg", label: "Focus Workflow" },
+        { id: 6, src: "./bg-6.jpg", label: "POV Jet & Villa" },
+      ];
+
+      const heroRow3 = [
+        { id: 7, src: "./bg-7.jpg", label: "Shopify $107K Sales" },
+        { id: 8, src: "./bg-8.jpg", label: "Succession Edit" },
+        { id: 9, src: "./bg-9.jpg", label: "Miami Supercar Edit" },
+      ];
+
+      const heroRow4 = [
+        { id: 10, src: "./bg-10.jpg", label: "$18.7M Crypto Course" },
+        { id: 11, src: "./bg-11.jpg", label: "Entrepreneur vs Workers" },
+        { id: 12, src: "./bg-1.jpg", label: "Payouts Showcase" },
+      ];
+
+      const handleFormSubmit = (e) => {
+        e.preventDefault();
+        setFormSubmitted(true);
+        setTimeout(() => {
+          setFormSubmitted(false);
+          setIsBookingOpen(false);
+        }, 2500);
+      };
+
+      // Hero Image Card Component
+      const BlankCard = ({ item }) => {
+        const [hasErr, setHasErr] = useState(false);
+        const cleanSrc = item.src ? String(item.src).trim().replace(/\\/g, '/') : '';
+
+        return (
+          <div className="relative rounded-2xl overflow-hidden border border-white/20 bg-[#0d0f17] w-56 sm:w-72 h-36 sm:h-44 flex-shrink-0 shadow-2xl group hover:border-blue-500 hover:scale-[1.03] transition-all duration-300">
+            {cleanSrc && !hasErr ? (
+              <img 
+                src={cleanSrc} 
+                alt={item.label}
+                onError={() => setHasErr(true)}
+                className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-300" 
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-950/30 via-slate-900/60 to-black flex flex-col items-center justify-center p-3 text-center space-y-1.5 border border-dashed border-white/20 group-hover:border-blue-500/50">
+                <i data-lucide="image" className="w-7 h-7 text-blue-400 group-hover:scale-110 transition-all"></i>
+                <span className="text-[10px] font-mono text-slate-200 font-semibold">{item.label}</span>
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      return (
+        <div className="min-h-screen bg-[#070709] text-white flex flex-col font-sans">
+          
+          {/* HEADER WITH TRANSPARENT INLINE SEARCH BAR */}
+          <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#070709]/90 backdrop-blur-xl">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+              
+              {/* Logo */}
+              <a href="#" className="flex items-center gap-2.5 group">
+                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 shadow-[0_0_20px_rgba(37,99,235,0.6)]">
+                  <i data-lucide="orbit" className="w-6 h-6 text-white"></i>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-1">
+                    <span className="font-extrabold text-xl tracking-tight text-white">ORBIT</span>
+                    <span className="font-extrabold text-xl tracking-tight text-blue-500">LABZ</span>
+                  </div>
+                  <span className="text-[10px] tracking-widest text-slate-400 font-semibold uppercase -mt-1">Content Agency</span>
+                </div>
+              </a>
+
+              {/* Navigation Links */}
+              <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-300">
+                <a href="#switcher" className="hover:text-white transition-colors flex items-center gap-1">
+                  Platform <i data-lucide="chevron-down" className="w-3.5 h-3.5 text-slate-400"></i>
+                </a>
+                <a href="#switcher" onClick={() => setActiveTab('creators')} className="hover:text-blue-400 transition-colors">For Creators</a>
+                <a href="#switcher" onClick={() => setActiveTab('brands')} className="hover:text-blue-400 transition-colors">For Brands</a>
+                <a href="#services" className="hover:text-white transition-colors">Services</a>
+              </nav>
+
+              {/* Center Transparent Search Bar */}
+              <div className="hidden md:block relative flex-1 max-w-sm mx-4">
+                <div className={`relative flex items-center px-3.5 py-2 rounded-full border transition-all duration-300 bg-transparent ${
+                  isSearchFocused 
+                    ? 'border-blue-500 ring-2 ring-blue-500/30 shadow-[0_0_20px_rgba(37,99,235,0.3)]' 
+                    : 'border-white/20 hover:border-white/40'
+                }`}>
+                  <i data-lucide="search" className="w-4 h-4 text-blue-400 shrink-0 mr-2.5"></i>
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Search opportunities..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                    className="w-full bg-transparent text-white text-xs font-medium placeholder:text-slate-400 focus:outline-none"
+                  />
+                  {searchQuery ? (
+                    <button 
+                      onClick={() => setSearchQuery('')}
+                      className="text-slate-400 hover:text-white p-0.5 ml-1"
+                    >
+                      <i data-lucide="x" className="w-3.5 h-3.5"></i>
+                    </button>
+                  ) : (
+                    <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-white/10 text-slate-300 rounded border border-white/10 shrink-0 ml-1">
+                      /
+                    </kbd>
+                  )}
+                </div>
+
+                {/* Floating Results Dropdown */}
+                {isSearchFocused && (
+                  <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl bg-[#0d0f17]/95 border border-blue-500/30 backdrop-blur-xl shadow-2xl p-3 space-y-1.5 z-50">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2.5 py-1">Quick Suggestions</p>
+                    {filteredResults.length > 0 ? (
+                      filteredResults.map((item, idx) => (
+                        <a
+                          key={idx}
+                          href={item.section}
+                          className="flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-600/20 text-xs text-slate-200 hover:text-white group transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <i data-lucide="sparkles" className="w-3.5 h-3.5 text-blue-400"></i>
+                            <span className="font-semibold">{item.title}</span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-[10px] bg-blue-600/20 text-blue-400 font-mono">
+                            {item.category}
+                          </span>
+                        </a>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-xs text-slate-400">No matching results found</div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setIsBookingOpen(true)}
+                  className="px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs tracking-wide shadow-[0_0_20px_rgba(37,99,235,0.6)] hover:scale-105 transition-all flex items-center gap-1.5 border border-blue-400/30"
+                >
+                  <span>Get Started</span>
+                  <i data-lucide="arrow-up-right" className="w-4 h-4"></i>
+                </button>
+              </div>
+
+            </div>
+          </header>
+
+          {/* HERO SECTION */}
+          <section className="relative min-h-[85vh] flex flex-col justify-between items-center overflow-hidden bg-[#070709] pt-8 pb-12">
+            
+            {/* 4 HORIZONTAL ROLLING MARQUEE LAYERS */}
+            <div className="absolute inset-0 flex flex-col justify-center gap-3 opacity-75 pointer-events-none select-none py-2">
+              
+              {/* Layer 1: Left */}
+              <div className="flex gap-4 w-max animate-marquee-left">
+                {[...heroRow1, ...heroRow1, ...heroRow1, ...heroRow1, ...heroRow1].map((item, idx) => (
+                  <BlankCard key={`r1-${idx}`} item={item} />
+                ))}
+              </div>
+
+              {/* Layer 2: Right */}
+              <div className="flex gap-4 w-max animate-marquee-right">
+                {[...heroRow2, ...heroRow2, ...heroRow2, ...heroRow2, ...heroRow2].map((item, idx) => (
+                  <BlankCard key={`r2-${idx}`} item={item} />
+                ))}
+              </div>
+
+              {/* Layer 3: Left */}
+              <div className="flex gap-4 w-max animate-marquee-left">
+                {[...heroRow3, ...heroRow3, ...heroRow3, ...heroRow3, ...heroRow3].map((item, idx) => (
+                  <BlankCard key={`r3-${idx}`} item={item} />
+                ))}
+              </div>
+
+              {/* Layer 4: Right */}
+              <div className="flex gap-4 w-max animate-marquee-right">
+                {[...heroRow4, ...heroRow4, ...heroRow4, ...heroRow4, ...heroRow4].map((item, idx) => (
+                  <BlankCard key={`r4-${idx}`} item={item} />
+                ))}
+              </div>
+
+            </div>
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/55 to-[#070709]/30 pointer-events-none" />
+            <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-blue-600/20 blur-[150px] rounded-full pointer-events-none" />
+
+            {/* Main Foreground Content */}
+            <div className="relative z-20 max-w-4xl mx-auto px-4 text-center space-y-8 my-auto">
+              
+              {/* Headline with Exact Blue Highlight Badge */}
+              <div className="space-y-4 pt-4">
+                <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-[1.1] drop-shadow-lg">
+                  Where Content <br className="hidden sm:inline" />
+                  Creators & Brands Get{' '}
+                  <span className="inline-flex items-center px-4 sm:px-6 py-1 sm:py-2 rounded-2xl bg-blue-600/90 text-white border border-blue-400/50 shadow-[0_0_40px_rgba(37,99,235,0.9)] font-black tracking-tight transform -rotate-1">
+                    Scale Fast.
+                  </span>
+                </h1>
+
+                <p className="text-base sm:text-xl text-slate-200 max-w-2xl mx-auto font-medium leading-relaxed pt-2 drop-shadow-md">
+                  We scale your <span className="text-white font-bold underline decoration-blue-500 decoration-2 underline-offset-4">Social Media Presence</span> with Highly Converting Edits and Content Plans.
+                </p>
+              </div>
+
+              {/* Action Button */}
+              <div className="flex flex-col items-center pt-4">
+                <button
+                  onClick={() => setIsBookingOpen(true)}
+                  className="group flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-extrabold text-base shadow-[0_0_35px_rgba(37,99,235,0.7)] hover:scale-105 transition-all border border-blue-400/40"
+                >
+                  <span>Get Started with Orbit Labz</span>
+                  <i data-lucide="arrow-right" className="w-5 h-5 text-white"></i>
+                </button>
+              </div>
+
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="relative z-20 flex flex-col items-center gap-2 pt-6 animate-bounce">
+              <div className="w-[2px] h-6 bg-gradient-to-b from-blue-500 to-transparent rounded-full shadow-[0_0_10px_#3b82f6]" />
+              <span className="text-[10px] font-bold tracking-widest text-slate-300 uppercase drop-shadow">SCROLL FOR MORE</span>
+            </div>
+
+            {/* Floating Action Button '+' */}
+            <div className="fixed bottom-6 left-6 z-40">
+              <button
+                onClick={() => setIsBookingOpen(true)}
+                className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-[0_0_25px_rgba(37,99,235,0.8)] hover:bg-blue-500 hover:scale-110 transition-all border border-blue-400/40"
+              >
+                <i data-lucide="plus" className="w-6 h-6"></i>
+              </button>
+            </div>
+
+          </section>
+
+          {/* TOGGLE SWITCHER SECTION WITH SMOOTH THEME TRANSITION TO WHITE FOR BRANDS */}
+          <section 
+            id="switcher" 
+            className={`relative py-24 px-4 sm:px-6 transition-all duration-700 ${
+              activeTab === 'brands' 
+                ? 'bg-slate-50 text-slate-900 border-t border-b border-slate-200' 
+                : 'bg-[#070709] text-white border-t border-b border-white/5'
+            }`}
+          >
+            <div className="max-w-6xl mx-auto space-y-12 text-center">
+              
+              {/* Toggle Switch Pill Container */}
+              <div className="relative inline-flex items-center">
+                <div className={`flex items-center p-1.5 rounded-full transition-all duration-500 shadow-2xl ${
+                  activeTab === 'brands'
+                    ? 'bg-white border border-slate-300 shadow-slate-200'
+                    : 'bg-white/5 border border-white/15 backdrop-blur-xl'
+                }`}>
+                  <button
+                    onClick={() => setActiveTab('creators')}
+                    className={`px-7 py-3 rounded-full text-sm font-extrabold transition-all ${
+                      activeTab === 'creators'
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.7)]'
+                        : (activeTab === 'brands' ? 'text-slate-600 hover:text-slate-900' : 'text-slate-400 hover:text-white')
+                    }`}
+                  >
+                    For Creators
+                  </button>
+                  
+                  <button
+                    onClick={() => setActiveTab('brands')}
+                    className={`px-7 py-3 rounded-full text-sm font-extrabold transition-all ${
+                      activeTab === 'brands'
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.7)]'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    For Brands
+                  </button>
+                </div>
+
+                {/* Arrow Annotation Callout */}
+                <div className="absolute left-full ml-4 hidden sm:flex items-center gap-1 font-mono text-xs select-none">
+                  <i data-lucide="corner-left-down" className={`w-4 h-4 rotate-90 ${activeTab === 'brands' ? 'text-blue-600' : 'text-blue-400'}`}></i>
+                  <span className={`font-extrabold ${activeTab === 'brands' ? 'text-blue-600' : 'text-blue-400'}`}>
+                    {activeTab === 'creators' ? 'Brand?' : 'Creator?'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Dynamic Sentence with Inline Social Media Icons */}
+              <h2 className={`text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-relaxed max-w-4xl mx-auto transition-colors duration-500 ${
+                activeTab === 'brands' ? 'text-slate-900' : 'text-white'
+              }`}>
+                {activeTab === 'creators' ? (
+                  <>
+                    Find opportunities across
+                    <SocialPillCapsule isLight={false} />
+                    make viral content, and start earning on Orbit Labz.
+                  </>
+                ) : (
+                  <>
+                    Launch converting campaigns across
+                    <SocialPillCapsule isLight={true} />
+                    scale your brand, and acquire customers with Orbit Labz.
+                  </>
+                )}
+              </h2>
+
+              <p className={`text-sm sm:text-base max-w-lg mx-auto transition-colors duration-500 ${
+                activeTab === 'brands' ? 'text-slate-600' : 'text-slate-400'
+              }`}>
+                {activeTab === 'creators'
+                  ? "Elevate your personal brand, boost watch time retention, and monetize your reach with Orbit Labz."
+                  : "Transform your brand's video strategy into a high-converting customer acquisition engine with measurable ROI."
+                }
+              </p>
+
+              {/* Dynamic Content Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4 text-left">
+                {(activeTab === 'creators' ? [
+                  { title: "Viral Retention Edits", desc: "Dynamic pacing, sound design, color grading & kinetic captions engineered to keep watch time above 85%.", tag: "Retention" },
+                  { title: "Cross-Platform Scale", desc: "Repurpose 1 long-form video into 10+ high-performing Reels, TikToks & Shorts optimized for each algorithm.", tag: "Multi-Platform" },
+                  { title: "Monetization Strategy", desc: "Turn your audience into recurring revenue with high-ticket digital products and brand deals.", tag: "Scale Income" },
+                  { title: "Scripting & Hook Design", desc: "Psychology-backed first 3-second hooks designed by expert storytellers to capture instant attention.", tag: "10x Reach" }
+                ] : [
+                  { title: "High-ROI Social Funnels", desc: "Convert scrollers into paying customers with high-converting short-form video funnels tailored to your brand pipeline.", tag: "ROI First" },
+                  { title: "Done-for-You UGC Production", desc: "We handpick and direct top-tier UGC creators and actors to craft authentic brand stories that resonate with buyers.", tag: "Full UGC Production" },
+                  { title: "Predictable Organic CAC", desc: "Lower your customer acquisition costs by dominating short-form feeds without relying solely on paid ads.", tag: "Lower Acquisition Cost" },
+                  { title: "Done-for-You Content Engine", desc: "From content strategy and scriptwriting to filming direction, editing, and publishing.", tag: "Turnkey Agency" }
+                ]).map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`p-6 rounded-2xl transition-all duration-300 flex flex-col justify-between space-y-4 shadow-xl border ${
+                      activeTab === 'brands'
+                        ? 'bg-white border-slate-200 hover:border-blue-500 hover:shadow-2xl'
+                        : 'bg-white/[0.03] border-white/10 hover:border-blue-500/40 hover:bg-white/[0.06]'
+                    }`}
+                  >
+                    <div className="space-y-3">
+                      <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                        activeTab === 'brands'
+                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      }`}>{item.tag}</span>
+                      
+                      <h3 className={`text-lg font-bold transition-colors ${
+                        activeTab === 'brands' ? 'text-slate-900 group-hover:text-blue-600' : 'text-white group-hover:text-blue-300'
+                      }`}>{item.title}</h3>
+                      
+                      <p className={`text-xs leading-relaxed ${
+                        activeTab === 'brands' ? 'text-slate-600' : 'text-slate-400'
+                      }`}>{item.desc}</p>
+                    </div>
+
+                    <button onClick={() => setIsBookingOpen(true)} className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:underline">
+                      <span>{activeTab === 'creators' ? 'Get Started' : 'Explore Solution'}</span>
+                      <i data-lucide="arrow-right" className="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+            </div>
+          </section>
+
+          {/* AGENCY SERVICES */}
+          <section id="services" className="py-20 px-4 bg-[#070709] border-t border-white/5">
+            <div className="max-w-7xl mx-auto space-y-12">
+              <div className="text-center space-y-3">
+                <span className="text-xs font-bold text-blue-400 uppercase tracking-wider">Services</span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Full-Service Video Agency</h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  { step: "01", title: "Short-Form Virality Engine", desc: "Instagram Reels, TikTok & YouTube Shorts engineered for high retention and algorithm push." },
+                  { step: "02", title: "YouTube Long-Form Production", desc: "Cinematic editing, soundscapes, pacing, and CTR-optimized thumbnails for video essays & podcasts." },
+                  { step: "03", title: "Scripting & Hook Engineering", desc: "Word-for-word scripts and psychology-backed 3-second hooks designed to stop scrollers." },
+                  { step: "04", title: "Brand UGC & Conversion Funnels", desc: "Vetted creator sourcing, performance ad editing, and organic funnel strategy for brands." }
+                ].map((s, i) => (
+                  <div key={i} className="p-8 rounded-3xl bg-[#0d0f17] border border-white/10 space-y-4 hover:border-blue-500/40 transition-all">
+                    <span className="text-xl font-bold text-blue-500 font-mono">{s.step}</span>
+                    <h3 className="text-xl font-bold text-white">{s.title}</h3>
+                    <p className="text-xs text-slate-400 leading-relaxed">{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* FOOTER */}
+          <footer className="bg-[#050507] border-t border-white/10 py-12 px-4 text-slate-400 text-xs mt-auto">
+            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-white">ORBIT<span className="text-blue-500">LABZ</span></span>
+                <span>• Content Agency (orbitlabz.com)</span>
+              </div>
+              <p>© {new Date().getFullYear()} Orbit Labz. All rights reserved.</p>
+            </div>
+          </footer>
+
+          {/* BOOKING MODAL */}
+          {isBookingOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <div className="relative w-full max-w-md rounded-3xl bg-[#0d0f17] border border-blue-500/30 p-6 space-y-6 shadow-2xl">
+                <button onClick={() => setIsBookingOpen(false)} className="absolute top-4 right-4 p-1 text-slate-400 hover:text-white">
+                  <i data-lucide="x" className="w-5 h-5"></i>
+                </button>
+
+                {formSubmitted ? (
+                  <div className="text-center py-6 space-y-3">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 mx-auto flex items-center justify-center">
+                      <i data-lucide="check-circle-2" className="w-8 h-8"></i>
+                    </div>
+                    <h3 className="text-xl font-bold text-white">Inquiry Received!</h3>
+                    <p className="text-xs text-slate-300">We will email you custom audit details within 24 hours.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <h3 className="text-xl font-bold text-white">Get Started with Orbit Labz</h3>
+                    <form onSubmit={handleFormSubmit} className="space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-300 mb-1">Name</label>
+                        <input type="text" required placeholder="Aniket" className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:outline-none focus:border-blue-500" />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-300 mb-1">Work Email</label>
+                        <input type="email" required placeholder="aniket@orbitlabz.com" className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:outline-none focus:border-blue-500" />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-300 mb-1">Social Handle or Domain</label>
+                        <input type="text" required placeholder="orbitlabz.com" className="w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-white focus:outline-none focus:border-blue-500" />
+                      </div>
+                      <button type="submit" className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg">
+                        Submit Request
+                      </button>
+                    </form>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
